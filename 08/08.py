@@ -87,4 +87,4 @@ if __name__ == "__main__":
     timer.start()
     unique_antinodes = find_unique_antinodes(puzzle_input, whoops=False)
     print(len(unique_antinodes))
-    timer.stop()  #
+    timer.stop()  # 0.53ms
