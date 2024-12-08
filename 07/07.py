@@ -1,16 +1,14 @@
 import math
-from itertools import product
 from operator import add, mul
 
 import utils
-from utils import reduce
 
 
 def is_valid(result, terms, with_concat=False):
-    if reduce(add, terms, 0) == result or reduce(mul, terms, 1) == result:
+    if utils.reduce(add, terms, 0) == result or utils.reduce(mul, terms, 1) == result:
         return True
 
-    for ops in product([add, mul, concat] if with_concat else [add, mul], repeat=len(terms) - 1):
+    for ops in utils.product([add, mul, concat] if with_concat else [add, mul], repeat=len(terms) - 1):
         a = terms[0]
         for i, op in enumerate(ops, start=1):
             b = terms[i]
