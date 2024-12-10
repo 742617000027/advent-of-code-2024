@@ -2,7 +2,7 @@ import utils
 
 
 def defragment(files, free):
-    defragmented = [files.pop(0)]
+    defragmented = checksum(files.pop(0))
 
     for file_id, file_start, file_len in files[::-1]:
         moved = False
@@ -16,11 +16,11 @@ def defragment(files, free):
 
             if remaining >= 0:
                 moved = True
-                defragmented.append((file_id, free_start, file_len))
+                defragmented += checksum((file_id, free_start, file_len))
                 break
 
         if not moved:
-            defragmented.append((file_id, file_start, file_len))
+            defragmented += checksum((file_id, file_start, file_len))
 
         if remaining > 0:
             free[i] = (free_start + file_len, remaining)
@@ -32,26 +32,25 @@ def defragment(files, free):
 
 
 def fragment(files, free):
-    fragmented = []
-    file_id, _, file_len = files.pop()
+    fragmented = 0
+    file_id, file_start, file_len = files.pop()
 
     for free_start, free_len in free:
 
         if not files and file_len > 0:
-            last_element_id, last_element_start_idx, last_element_length = fragmented[-1]
-            fragmented[-1] = (last_element_id, last_element_start_idx, last_element_length + file_len)
+            fragmented += checksum((file_id, file_start, file_len))
             break
 
         if files:
-            fragmented.append(files.pop(0))
+            fragmented += checksum(files.pop(0))
 
         while free_len > 0:
 
             if file_len == 0:
-                file_id, _, file_len = files.pop()
+                file_id, file_start, file_len = files.pop()
 
             blocks_to_move = min(file_len, free_len)
-            fragmented.append((file_id, free_start, blocks_to_move))
+            fragmented += checksum((file_id, free_start, blocks_to_move))
 
             file_len -= blocks_to_move
             free_len -= blocks_to_move
@@ -60,11 +59,9 @@ def fragment(files, free):
     return fragmented
 
 
-def checksum(elements):
-    total = 0
-    for element_id, start, length in elements:
-        total += element_id * (length * (2 * start + length - 1) // 2)
-    return total
+def checksum(element):
+    element_id, start, length = element
+    return element_id * (length * (2 * start + length - 1) // 2)
 
 
 def process_puzzle_input(puzzle_input):
@@ -92,13 +89,11 @@ if __name__ == "__main__":
     # Part 1
     timer.start()
     files, free = process_puzzle_input(puzzle_input)
-    fragmented = fragment(files, free)
-    print(checksum(fragmented))
-    timer.stop()  #  13.89ms
+    print(fragment(files, free))
+    timer.stop()  #  11.33ms
 
     # Part 2
     timer.start()
     files, free = process_puzzle_input(puzzle_input)
-    defragmented = defragment(files, free)
-    print(checksum(defragmented))
-    timer.stop()  # 334.64ms
+    print(defragment(files, free))
+    timer.stop()  # 341.92ms
