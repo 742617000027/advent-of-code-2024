@@ -5,28 +5,28 @@ def defragment(files, free):
     defragmented = checksum(files.pop(0))
 
     for file_id, file_start, file_len in files[::-1]:
-        moved = False
 
         for i, (free_start, free_len) in enumerate(free):
 
             if free_start > file_start:
+                defragmented += checksum((file_id, file_start, file_len))
                 break
 
             remaining = free_len - file_len
 
             if remaining >= 0:
-                moved = True
                 defragmented += checksum((file_id, free_start, file_len))
+
+                if remaining > 0:
+                    free[i] = (free_start + file_len, remaining)
+
+                else:
+                    free = free[:i] + free[i + 1:]
+
                 break
 
-        if not moved:
+        else:
             defragmented += checksum((file_id, file_start, file_len))
-
-        if remaining > 0:
-            free[i] = (free_start + file_len, remaining)
-
-        if remaining == 0:
-            free = free[:i] + free[i + 1:]
 
     return defragmented
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     timer.start()
     files, free = process_puzzle_input(puzzle_input)
     print(fragment(files, free))
-    timer.stop()  #  11.33ms
+    timer.stop()  # 11.33ms
 
     # Part 2
     timer.start()
