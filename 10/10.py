@@ -3,23 +3,24 @@ import utils
 
 def calculate(puzzle_input, rating_mode=False):
     board = [[int(c) for c in line] for line in puzzle_input]
-    Y, X = len(board), len(board[0])
-    paths = {(y, x): [(y, x)] for y, line in enumerate(board) for x, n in enumerate(line) if n == 0}
+    paths = [[(y, x)] for y, line in enumerate(board) for x, n in enumerate(line) if n == 0]
 
     for elevation in range(1, 10):
+        paths = [find_new_locs(board, elevation, locs) for locs in paths]
 
-        for trailhead, locs in paths.items():
-            new_locs = []
+    return sum([len(locs if rating_mode else set(locs)) for locs in paths])
 
-            for (y, x), (dy, dx) in utils.product(locs, utils.DIRS):
-                ny, nx = y + dy, x + dx
 
-                if 0 <= ny < Y and 0 <= nx < X and board[ny][nx] == elevation:
-                    new_locs.append((ny, nx))
-
-            paths[trailhead] = new_locs
-
-    return sum([len(locs if rating_mode else set(locs)) for locs in paths.values()])
+def find_new_locs(board, elevation, locs):
+    Y, X = len(board), len(board[0])
+    return [
+        (ny,  nx)
+        for (y, x), (dy, dx)
+        in utils.product(locs, utils.DIRS)
+        if 0 <= (ny := y + dy) < Y
+           and 0 <= (nx := x + dx) < X
+           and board[ny][nx] == elevation
+    ]
 
 
 if __name__ == "__main__":
