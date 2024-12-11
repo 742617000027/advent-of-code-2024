@@ -5,10 +5,10 @@ def get_total_safety(puzzle_input, dampener=False):
     processed = process_puzzle_input(puzzle_input)
     return sum([get_single_safety(report, dampener) for report in processed])
 
-def get_single_safety(report, dampener):
 
+def get_single_safety(report, dampener):
     for i in range(len(report)):
-        d = diff(report[:i] + report[i+dampener:])
+        d = diff(report[:i] + report[i + dampener:])
         gt0 = []
         lt0 = []
         within_interval = []
@@ -36,7 +36,7 @@ def process_puzzle_input(puzzle_input):
 def diff(l):
     ret = []
     for i in range(1, len(l)):
-        ret.append(l[i] - l[i-1])
+        ret.append(l[i] - l[i - 1])
     return ret
 
 
