@@ -38,9 +38,8 @@ def walk(board, start_pos, dir_idx, find_loops=False):
             dy, dx = utils.DIRS[dir_idx]
             continue
 
-        if find_loops:
-            if (y, x) in visited and (ny, nx) in visited[(y, x)]:
-                return visited, True
+        if find_loops and (y, x) in visited and (ny, nx) in visited[(y, x)]:
+            return visited, True
 
         visited[(y, x)].add((ny, nx))
         y, x = ny, nx
