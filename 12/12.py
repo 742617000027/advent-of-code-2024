@@ -55,8 +55,8 @@ def make_binary_boards(board):
     while len(all_locations) > 0:
         y, x = all_locations.pop()
         area_indicator = board[y][x]
-        conv_board = [[0] * X for _ in range(Y)]
-        conv_board[y][x] = 1
+        binary_board = [[0] * X for _ in range(Y)]
+        binary_board[y][x] = 1
         queue = utils.deque([(y, x)])
 
         while queue:
@@ -66,22 +66,22 @@ def make_binary_boards(board):
                 ny, nx = y + dy, x + dx
 
                 if 0 <= ny < Y and 0 <= nx < X and board[ny][nx] == area_indicator and (ny, nx) in all_locations:
-                    conv_board[ny][nx] = 1
+                    binary_board[ny][nx] = 1
                     queue.append((ny, nx))
                     all_locations -= {(ny, nx)}
 
-        ret.append( pad(conv_board))
+        ret.append(pad(binary_board))
 
     return ret
 
 
-def pad(conv_board):
-    for line in conv_board:
+def pad(binary_board):
+    for line in binary_board:
         line.insert(0, 0)
         line.append(0)
-    conv_board.insert(0, [0] * len(conv_board[0]))
-    conv_board.append([0] * len(conv_board[0]))
-    return conv_board
+    binary_board.insert(0, [0] * len(binary_board[0]))
+    binary_board.append([0] * len(binary_board[0]))
+    return binary_board
 
 
 def find_unique_area_indicators(board):
