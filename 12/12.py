@@ -4,10 +4,10 @@ import utils
 def calc_total_price(puzzle_input, sides_mode=False):
     board = process_puzzle_input(puzzle_input)
     binary_boards = make_binary_boards(board)
-    return sum(sum(sum(line) for line in binary_board) * find_number_of_sides(binary_board, sides_mode) for binary_board in binary_boards)
+    return sum(sum(sum(line) for line in binary_board) * calc_multiplier(binary_board, sides_mode) for binary_board in binary_boards)
 
 
-def find_number_of_sides(binary_board, side_mode):
+def calc_multiplier(binary_board, side_mode):
     Y, X = len(binary_board), len(binary_board[0])
     sides = 0
 
