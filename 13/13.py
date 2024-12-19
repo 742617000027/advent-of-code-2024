@@ -10,7 +10,7 @@ def play(claw_machines):
         if None in zero_rem_indices:
             continue
 
-        a_presses, b_presses = calculate_presses(prize, a, b, zero_rem_indices)
+        a_presses, b_presses = calculate_presses(prize, a, b)
         tokens += a_presses * 3 + b_presses
 
     return tokens
@@ -27,26 +27,23 @@ def find_zero_rem_idx(prize_val, a_val, b_val):
     return None
 
 
-def calculate_presses(prize, a, b, zero_rem_indices):
-    price_x, price_y = prize
+def calculate_presses(prize, a, b):
+    prize_x, prize_y = prize
     a_dx, a_dy = a
     b_dx, b_dy = b
-    x_zero_rem_idx, y_zero_rem_idx = zero_rem_indices
 
-    p1x, p1y = x_zero_rem_idx, (price_x - x_zero_rem_idx * a_dx) // b_dx
-    p2x, p2y = y_zero_rem_idx, (price_y - y_zero_rem_idx * a_dy) // b_dy
-    m1, m2 = -a_dx / b_dx, -a_dy / b_dy
+    det = a_dx * b_dy - a_dy * b_dx
+    a_presses = (prize_x * b_dy - prize_y * b_dx) // det
+    b_presses = (prize_y * a_dx - prize_x * a_dy) // det
 
-    a_presses = round((m1 * p1x - m2 * p2x + ((price_y - p2x * a_dy) // b_dy) - p1y) / (m1 - m2))
-    b_presses = round(m1 * a_presses - m1 * x_zero_rem_idx + p1y)
-
-    if not (
-            price_x - (a_presses * a_dx + b_presses * b_dx) == 0
-            and price_y - (a_presses * a_dy + b_presses * b_dy) == 0
+    if (
+            a_presses * a_dx + b_presses * b_dx == prize_x
+            and a_presses * a_dy + b_presses * b_dy == prize_y
+            and a_presses >= 0 and b_presses >= 0
     ):
-        return 0, 0
+        return a_presses, b_presses
 
-    return a_presses, b_presses
+    return 0, 0
 
 
 def process_puzzle_input(puzzle_input, correction=0):
