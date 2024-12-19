@@ -5,7 +5,7 @@ def play(claw_machines):
     tokens = 0
 
     for prize, a, b in claw_machines:
-        zero_rem_indices = find_zero_rem_indices(prize, a, b)
+        zero_rem_indices = [find_zero_rem_idx(prize_val, a_val, b_val) for prize_val, a_val, b_val in zip(prize, a, b)]
 
         if None in zero_rem_indices:
             continue
@@ -16,56 +16,15 @@ def play(claw_machines):
     return tokens
 
 
-def find_zero_rem_indices(prize, a, b):
-    prize_x, prize_y = prize
-    a_dx, a_dy = a
-    b_dx, b_dy = b
+def find_zero_rem_idx(prize_val, a_val, b_val):
 
-    x_remainders, y_remainders = set(), set()
-    x_zero_rem_idx, y_zero_rem_idx = None, None
-    x_done, y_done = False, False
+    for i in range(b_val):
+        remaining = prize_val - i * a_val
 
-    for a_presses, (x_distance, y_distance) in enumerate(zip(range(prize_x, 0, -a_dx), range(prize_y, 0, -a_dy))):
+        if remaining % b_val == 0:
+            return i
 
-        if not x_done:
-            x_remainders, x_zero_rem_idx, x_done = update_rems(
-                x_distance,
-                b_dx,
-                x_remainders,
-                x_zero_rem_idx,
-                x_done,
-                a_presses
-            )
-
-        if not y_done:
-            y_remainders, y_zero_rem_idx, y_done = update_rems(
-                y_distance,
-                b_dy,
-                y_remainders,
-                y_zero_rem_idx,
-                y_done,
-                a_presses
-            )
-
-        if x_done and y_done:
-            break
-
-    return x_zero_rem_idx, y_zero_rem_idx
-
-
-def update_rems(distance, bd, rems, zero_rem, done, a_presses):
-    rem = distance % bd
-
-    if rem in rems and 0 not in rems:
-        return rems, None, True
-
-    rems.add(rem)
-
-    if rem == 0:
-        done = True
-        zero_rem = a_presses
-
-    return rems, zero_rem, done
+    return None
 
 
 def calculate_presses(prize, a, b, zero_rem_indices):
