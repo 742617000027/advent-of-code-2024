@@ -5,26 +5,10 @@ def play(claw_machines):
     tokens = 0
 
     for prize, a, b in claw_machines:
-        zero_rem_indices = [find_zero_rem_idx(prize_val, a_val, b_val) for prize_val, a_val, b_val in zip(prize, a, b)]
-
-        if None in zero_rem_indices:
-            continue
-
         a_presses, b_presses = calculate_presses(prize, a, b)
         tokens += a_presses * 3 + b_presses
 
     return tokens
-
-
-def find_zero_rem_idx(prize_val, a_val, b_val):
-
-    for i in range(b_val):
-        remaining = prize_val - i * a_val
-
-        if remaining % b_val == 0:
-            return i
-
-    return None
 
 
 def calculate_presses(prize, a, b):
